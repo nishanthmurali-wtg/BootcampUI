@@ -9,6 +9,8 @@ export interface Department {
   mandatory: boolean;
 }
 
+export type NewDepartmentPayload = Omit<Department, 'id'>;
+
 @Injectable({ providedIn: 'root' })
 export class DepartmentService {
   private baseUrl = '/api/departments';
@@ -17,6 +19,10 @@ export class DepartmentService {
 
   getAllDepartments(): Observable<Department[]> {
     return this.http.get<Department[]>(this.baseUrl);
+  }
+
+  addDepartment(department: NewDepartmentPayload): Observable<Department> {
+    return this.http.post<Department>(this.baseUrl, department);
   }
 
   deleteDepartment(id: number): Observable<void> {

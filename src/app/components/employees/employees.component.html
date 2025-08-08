@@ -1,8 +1,42 @@
 <div class="container py-3 mt-3">
-  <div class="d-flex justify-content-end mb-4">
-    <button class="btn btn-primary">
-      + Add Employee
-    </button>
+  <div class="d-flex justify-content-center mb-4">
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#EmployeeModal" (click)="openModal()"> + Add Employee </button>
+  </div>
+  <div class="modal" id="EmployeeModal">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">{{ editMode ? 'Update Employee' : 'Add New Employee'}}</h4>
+          <button type="button" class="btn-close" (click)="closeModal()" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="employeeForm">
+            <div class="mb-3">
+              <label class="form-label">First Name</label>
+              <input type="text" class="form-control" formControlName="nameFirst">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Last Name</label>
+              <input type="text" class="form-control" formControlName="nameLast">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Departments (Press Ctrl to select multiple)</label>
+              <select class="form-select" formControlName="departments" multiple>
+                <option *ngFor="let dept of nonMandatoryDepartments" [value]="dept.id">
+                  {{ dept.name }}
+                </option>
+              </select>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+          <button type="button" class="btn btn-primary" (click)="onSave()" [disabled]="employeeForm.invalid">
+            {{ editMode ? 'Update' : 'Save' }}
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div *ngIf="loading" class="text-center py-5">
@@ -15,7 +49,7 @@
     {{ error }}
   </div>
 
-  <div *ngIf="!loading && !error" class="table-responsive">
+  <div *ngIf="!loading && !error" class="table-responsive d-flex justify-content-center">
     <table class="table table-bordered table-hover align-middle">
       <thead class="table-light">
       <tr>
@@ -35,7 +69,7 @@
           {{ getDepartmentNames(emp.departments) }}
         </td>
         <td class="text-center">
-          <button class="btn btn-sm btn-outline-secondary me-2">
+          <button class="btn btn-sm btn-outline-secondary me-2" (click)="openModal(emp)">
             <i class="bi bi-pencil"></i>
           </button>
           <button class="btn btn-sm btn-outline-danger" (click)="onDelete(emp.id)">
